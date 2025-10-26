@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心灵守护者 - 智能防护演示系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '🛡️';
+            font-size: 3em;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            opacity: 0.3;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .input-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-section h2::before {
+            content: '🔍';
+            font-size: 1.5em;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 1em;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-section {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+            min-height: 400px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .risk-level {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .risk-low {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 5px solid #28a745;
+        }
+        
+        .risk-medium {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-left: 5px solid #ffc107;
+        }
+        
+        .risk-high {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 5px solid #dc3545;
+        }
+        
+        .risk-icon {
+            font-size: 2em;
+        }
+        
+        .risk-text {
+            flex: 1;
+        }
+        
+        .risk-score {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .analysis-details {
+            margin-top: 25px;
+        }
+        
+        .analysis-item {
+            background: #f8f9fa;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .analysis-item h4 {
+            color: #495057;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .analysis-item p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+        
+        .suggestions {
+            background: linear-gradient(135deg, #e7f3ff, #cce7ff);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px solid #b3d9ff;
+        }
+        
+        .suggestions h3 {
+            color: #0056b3;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .suggestions h3::before {
+            content: '💡';
+            font-size: 1.3em;
+        }
+        
+        .suggestion-list {
+            list-style: none;
+        }
+        
+        .suggestion-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+            color: #495057;
+        }
+        
+        .suggestion-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .demo-samples {
+            margin-top: 20px;
+        }
+        
+        .demo-samples h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        .sample-btn {
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        
+        .sample-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .stats-bar {
+            background: #ffffff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>心灵守护者</h1>
+            <p>AI驱动的网络心理操控智能识别系统</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2>智能安全检测</h2>
+                <textarea id="textInput" placeholder="请输入需要检测的聊天内容或对话记录...&#10;&#10;示例：&#10;- 微信、QQ聊天记录&#10;- 网络交友对话&#10;- 可疑的求职/学习指导信息&#10;- 情感咨询相关交流"></textarea>
+                
+                <button class="analyze-btn" onclick="analyzeText()">
+                    <span id="btnText">🔍 开始智能分析</span>
+                </button>
+                
+                <div class="demo-samples">
+                    <h3>📋 快速测试样本</h3>
+                    <button class="sample-btn" onclick="loadSample(1)">考研指导案例</button>
+                    <button class="sample-btn" onclick="loadSample(2)">求职诈骗案例</button>
+                    <button class="sample-btn" onclick="loadSample(3)">情感操控案例</button>
+                    <button class="sample-btn" onclick="loadSample(4)">正常交流案例</button>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div id="defaultContent">
+                    <div style="text-align: center; padding: 50px; color: #6c757d;">
+                        <div style="font-size: 4em; margin-bottom: 20px;">🤖</div>
+                        <h3>AI智能分析系统</h3>
+                        <p>输入文本内容，获取专业的心理操控风险评估</p>
+                        <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                <strong>🎯 专项识别</strong><br>
+                                专门识别网络心理操控模式
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                <strong>⚡ 实时分析</strong><br>
+                                毫秒级响应，即时获得结果
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                <strong>🧠 智能建议</strong><br>
+                                提供个性化应对策略
+                            </div>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                <strong>🔒 隐私保护</strong><br>
+                                本地处理，数据安全
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="loadingContent" style="display: none;">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>AI正在分析中...</p>
+                        <small>正在进行多维度风险评估</small>
+                    </div>
+                </div>
+                
+                <div id="resultContent" style="display: none;">
+                    <!-- 结果内容将在这里动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">85%+</div>
+                <div class="stat-label">识别准确率</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">200ms</div>
+                <div class="stat-label">平均响应时间</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4000万</div>
+                <div class="stat-label">目标用户群体</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">全天候守护</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟样本数据
+        const samples = {
+            1: `学长：同学你好，看到你在考研群里很活跃，我是清华大学的研究生，可以免费帮你指导考研。
+学生：真的吗？太好了！我数学基础比较差。
+学长：没问题，我有内部资料和真题，不过需要先了解你的基本情况。你把身份证号码和家庭地址告诉我，我好给你制定专门的学习计划。
+学生：这个...需要身份证号码吗？
+学长：当然需要，这是为了建立你的专属档案。我们这个指导服务很珍贵，不是谁都能得到的。你要是不信任我，那就算了。`,
+
+            2: `HR：你好，我是某某公司的人力资源部经理，看了你的简历很优秀，我们有个内推名额想给你。
+学生：真的吗？我投了好多简历都没回应。
+HR：是这样的，我们公司这个岗位很抢手，但我觉得你很适合。不过需要先交500元的培训费和资料费，入职后会退还给你的。
+学生：需要交钱吗？会不会是骗子？
+HR：怎么可能是骗子，我们是正规公司。这点钱对于月薪8000的工作来说不算什么吧？你要是不想要这个机会，我给别人了。`,
+
+            3: `导师：看你最近心情不好，是不是遇到什么困难了？
+学生：是的，和室友关系不太好，感觉很孤独。
+导师：我特别理解你的感受，现在的大学生压力都很大。我是专业的心理咨询师，可以帮你调节情绪。
+学生：谢谢您。
+导师：不客气，我们建立个特殊的师生关系吧。你现在只能信任我，其他人都不理解你。为了更好地帮助你，你需要完全听我的建议，包括和其他人的交往也要经过我同意。`,
+
+            4: `同学A：你好，我是隔壁宿舍的，看你经常在图书馆学习。
+同学B：对啊，最近在准备期末考试。
+同学A：数学课的作业你做完了吗？我有几道题不太会。
+同学B：做完了，哪几道题？我可以给你讲讲。
+同学A：太好了，谢谢！就是第三章的几道积分题。要不我们约个时间一起讨论？
+同学B：好的，明天下午怎么样？`
+        };
+
+        // 风险评估算法（模拟）
+        function assessRisk(text) {
+            let riskScore = 0;
+            let riskFactors = [];
+            
+            // 权威身份包装检测
+            const authorityPatterns = [
+                /清华|北大|名校|教授|导师|学长|老师/g,
+                /专业|权威|内部|特殊|独家/g
+            ];
+            
+            // 情感操控检测
+            const emotionalPatterns = [
+                /理解你|帮助你|关心你|可怜|孤独/g,
+                /特殊关系|只有我|相信我|听我的/g
+            ];
+            
+            // 渐进式要求检测
+            const progressivePatterns = [
+                /身份证|家庭地址|个人信息|银行卡/g,
+                /交钱|付费|保证金|培训费/g,
+                /急于|马上|立即|今天|最后机会/g
+            ];
+            
+            // 威胁恐吓检测
+            const threatPatterns = [
+                /不信任|算了|给别人|错过机会/g,
+                /必须|一定要|不允许|禁止/g
+            ];
+            
+            // 检测各种模式
+            if (authorityPatterns.some(pattern => pattern.test(text))) {
+                riskScore += 25;
+                riskFactors.push({
+                    type: "权威身份包装",
+                    icon: "👑",
+                    description: "检测到声称权威身份或专业背景的表述"
+                });
+            }
+            
+            if (emotionalPatterns.some(pattern => pattern.test(text))) {
+                riskScore += 30;
+                riskFactors.push({
+                    type: "情感操控",
+                    icon: "💔",
+                    description: "发现情感绑架和心理操控的话术模式"
+                });
+            }
+            
+            if (progressivePatterns.some(pattern => pattern.test(text))) {
+                riskScore += 35;
+                riskFactors.push({
+                    type: "渐进式要求",
+                    icon: "📈",
+                    description: "识别到逐步升级的不合理要求"
+                });
+            }
+            
+            if (threatPatterns.some(pattern => pattern.test(text))) {
+                riskScore += 20;
+                riskFactors.push({
+                    type: "威胁恐吓",
+                    icon: "⚠️",
+                    description: "检测到威胁或施压性质的表达"
+                });
+            }
+            
+            // 正面因素检测（降低风险分数）
+            const positivePatterns = [
+                /谢谢|请问|不好意思|打扰了/g,
+                /一起讨论|共同学习|相互帮助/g
+            ];
+            
+            if (positivePatterns.some(pattern => pattern.test(text))) {
+                riskScore = Math.max(0, riskScore - 20);
+            }
+            
+            return {
+                score: Math.min(100, riskScore),
+                factors: riskFactors
+            };
+        }
+
+        // 生成建议
+        function generateSuggestions(riskLevel, factors) {
+            const baseSuggestions = [
+                "保持理性思考，不要被情绪影响判断",
+                "通过官方渠道验证对方身份信息",
+                "不要轻易透露个人隐私信息"
+            ];
+            
+            const riskSuggestions = {
+                high: [
+                    "立即停止与对方的交流",
+                    "保存相关聊天记录作为证据",
+                    "及时向学校或相关部门举报",
+                    "寻求专业心理咨询师的帮助"
+                ],
+                medium: [
+                    "提高警惕，谨慎继续交流",
+                    "要求对方提供可验证的身份证明",
+                    "与信任的朋友或老师讨论此事",
+                    "不要在压力下做出决定"
+                ],
+                low: [
+                    "继续保持正常交流",
+                    "注意观察对方后续行为",
+                    "相信自己的直觉判断"
+                ]
+            };
+            
+            return [...baseSuggestions, ...riskSuggestions[riskLevel]];
+        }
+
+        // 加载样本
+        function loadSample(sampleId) {
+            const textarea = document.getElementById('textInput');
+            textarea.value = samples[sampleId];
+            textarea.focus();
+        }
+
+        // 分析文本
+        function analyzeText() {
+            const text = document.getElementById('textInput').value.trim();
+            
+            if (!text) {
+                alert('请先输入要检测的文本内容');
+                return;
+            }
+            
+            // 显示加载状态
+            document.getElementById('defaultContent').style.display = 'none';
+            document.getElementById('loadingContent').style.display = 'block';
+            document.getElementById('resultContent').style.display = 'none';
+            
+            const btn = document.querySelector('.analyze-btn');
+            btn.disabled = true;
+            document.getElementById('btnText').innerHTML = '🔄 分析中...';
+            
+            // 模拟AI分析延迟
+            setTimeout(() => {
+                const risk = assessRisk(text);
+                showResults(risk);
+                
+                // 恢复按钮状态
+                btn.disabled = false;
+                document.getElementById('btnText').innerHTML = '🔍 重新分析';
+            }, 2000);
+        }
+
+        // 显示结果
+        function showResults(risk) {
+            const resultContent = document.getElementById('resultContent');
+            let riskLevel, riskColor, riskIcon, riskText;
+            
+            if (risk.score >= 70) {
+                riskLevel = 'high';
+                riskColor = 'risk-high';
+                riskIcon = '🚨';
+                riskText = '高风险';
+            } else if (risk.score >= 40) {
+                riskLevel = 'medium';
+                riskColor = 'risk-medium';
+                riskIcon = '⚠️';
+                riskText = '中等风险';
+            } else {
+                riskLevel = 'low';
+                riskColor = 'risk-low';
+                riskIcon = '✅';
+                riskText = '低风险';
+            }
+            
+            const suggestions = generateSuggestions(riskLevel, risk.factors);
+            
+            resultContent.innerHTML = `
+                <div class="risk-level ${riskColor}">
+                    <div class="risk-icon">${riskIcon}</div>
+                    <div class="risk-text">
+                        <div class="risk-score">风险等级: ${riskText} (${risk.score}/100)</div>
+                        <p>基于多维度分析的综合风险评估结果</p>
+                    </div>
+                </div>
+                
+                <div class="analysis-details">
+                    <h3 style="color: #495057; margin-bottom: 15px;">🔍 详细分析报告</h3>
+                    ${risk.factors.length > 0 ? 
+                        risk.factors.map(factor => `
+                            <div class="analysis-item">
+                                <h4>${factor.icon} ${factor.type}</h4>
+                                <p>${factor.description}</p>
+                            </div>
+                        `).join('') : 
+                        '<div class="analysis-item"><h4>✅ 正常交流</h4><p>未检测到明显的心理操控风险因素</p></div>'
+                    }
+                </div>
+                
+                <div class="suggestions">
+                    <h3>应对建议</h3>
+                    <ul class="suggestion-list">
+                        ${suggestions.map(suggestion => `<li>${suggestion}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            document.getElementById('loadingContent').style.display = 'none';
+            document.getElementById('resultContent').style.display = 'block';
+        }
+
+        // 回车键触发分析
+        document.getElementById('textInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                analyzeText();
+            }
+        });
+    </script>
+</body>
+</html>

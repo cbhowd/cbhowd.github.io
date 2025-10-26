@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心灵守护者 - 系统架构</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0.05) 20px
+            );
+            animation: drift 20s linear infinite;
+        }
+        
+        @keyframes drift {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header .subtitle {
+            font-size: 1.4em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .nav-breadcrumb {
+            background: #f8f9fa;
+            padding: 15px 40px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #6c757d;
+        }
+        
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .breadcrumb a:hover {
+            color: #764ba2;
+        }
+        
+        .progress-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .section:nth-child(1) { animation-delay: 0.2s; }
+        .section:nth-child(2) { animation-delay: 0.4s; }
+        .section:nth-child(3) { animation-delay: 0.6s; }
+        .section:nth-child(4) { animation-delay: 0.8s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-title {
+            font-size: 2.2em;
+            color: #2d3748;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+        
+        /* 架构图样式 */
+        .architecture-diagram {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .architecture-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .layer {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .layer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+        
+        .layer.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f0f4ff, #e8f2ff);
+        }
+        
+        .layer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .layer-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .layer-icon {
+            font-size: 1.5em;
+        }
+        
+        .layer-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .layer-description {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .layer-components {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .component {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .component:hover {
+            background: #e8f2ff;
+            transform: translateX(5px);
+        }
+        
+        .component-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .layer-detail {
+            display: none;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            border: 2px solid #667eea;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        .layer-detail.active {
+            display: block;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .detail-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .detail-tab {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .detail-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .detail-content {
+            display: none;
+        }
+        
+        .detail-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .tech-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .tech-detail-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .tech-detail-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tech-detail-desc {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .tech-specs {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .spec-item:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .spec-label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .spec-value {
+            color: #6c757d;
+        }
+        
+        .close-detail {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .interface-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .preview-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+        }
+        
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .preview-icon {
+            font-size: 2em;
+        }
+        
+        .preview-header h4 {
+            color: #2d3748;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .preview-image-container {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #e9ecef;
+        }
+        
+        .preview-placeholder {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            height: 445px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #6c757d;
+            position: relative;
+        }
+        
+        .placeholder-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            opacity: 0.6;
+        }
+        
+        .preview-placeholder p {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .preview-placeholder small {
+            font-size: 0.9em;
+            color: #95a5a6;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 15px;
+            border: 1px dashed #bdc3c7;
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: 445px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .preview-description {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .preview-description p {
+            margin-bottom: 8px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        
+        .preview-description p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .preview-description strong {
+            color: #2d3748;
+        }
+        
+        /* AI引擎展示 */
+        .ai-engines-section {
+            background: linear-gradient(135deg, #fff9f0, #fef5e7);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 2px solid #f59e0b;
+        }
+        
+        .engines-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            color: #92400e;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border-color: #f59e0b;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.6);
+        }
+        
+        .engine-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .engine-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .engine-overview {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .engine-details {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .engine-stats {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .stat-item {
+            margin-bottom: 20px;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #f59e0b;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .engine-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .feature-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .feature-desc {
+            color: #4a5568;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        
+        /* 技术栈展示 */
+        .tech-stack {
+            background: linear-gradient(135deg, #f0fff4, #c6f6d5);
+            border: 2px solid #48bb78;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+        
+        .tech-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .tech-category {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tech-category-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #276749;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tech-list {
+            list-style: none;
+        }
+        
+        .tech-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tech-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .tech-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .tech-purpose {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .engine-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .engines-tabs {
+                justify-content: center;
+            }
+            
+            .tech-categories {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-indicator" id="progressBar"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>🏗️ 系统架构</h1>
+                <div class="subtitle">"四层三端一核心" 分布式技术架构</div>
+            </div>
+        </div>
+        
+        <div class="nav-breadcrumb">
+            <div class="breadcrumb">
+                <a href="javascript:void(0)" onclick="goHome()">🏠 演示系统</a>
+                <span>></span>
+                <span>🏗️ 系统架构</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- 整体架构图 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>📐</span>
+                    整体架构设计："四层三端一核心"
+                </h2>
+                <p style="font-size: 1.1em; color: #4a5568; margin-bottom: 25px;">
+                    采用现代化的分布式架构设计，确保系统的可扩展性、稳定性和安全性。每一层都有明确的职责划分，支持独立开发、部署和维护。
+                </p>
+                
+                <div class="architecture-diagram">
+                    <div class="architecture-layers">
+                        <!-- 用户界面层 -->
+                        <div class="layer" onclick="toggleLayer(this)" data-layer="ui">
+                            <div class="layer-header">
+                                <div class="layer-title">
+                                    <span class="layer-icon">📱</span>
+                                    用户界面层 (UI Layer)
+                                </div>
+                                <div class="layer-badge">三端统一</div>
+                            </div>
+                            <div class="layer-description">
+                                负责用户交互和界面展示，采用响应式设计理念，为不同终端用户提供一致的体验。
+                            </div>
+                            <div class="layer-components">
+                                <div class="component">
+                                    <div class="component-name">心灵盾牌APP</div>
+                                    <div class="component-desc">学生端移动应用</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">守护者控制台</div>
+                                    <div class="component-desc">学校管理后台</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">心灵桥梁平台</div>
+                                    <div class="component-desc">家长协同端</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">统一UI组件库</div>
+                                    <div class="component-desc">确保视觉一致性</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 详细展开内容 -->
+                            <div class="layer-detail" id="ui-detail">
+                                <button class="close-detail" onclick="closeDetail(event)">×</button>
+                                <h3 style="color: #2d3748; margin-bottom: 20px;">📱 用户界面层 - 详细技术架构</h3>
+                                
+                                <div class="detail-tabs">
+                                    <button class="detail-tab active" onclick="switchDetailTab(event, 'ui-preview')">界面预览</button>
+                                    <button class="detail-tab" onclick="switchDetailTab(event, 'ui-frontend')">前端技术</button>
+                                    <button class="detail-tab" onclick="switchDetailTab(event, 'ui-design')">设计系统</button>
+                                    <button class="detail-tab" onclick="switchDetailTab(event, 'ui-optimization')">性能优化</button>
+                                </div>
+                                
+                                <!-- 界面预览 -->
+                                <div class="detail-content active" id="ui-preview">
+                                    <div class="interface-preview-grid">
+                                        <div class="preview-card">
+                                            <div class="preview-header">
+                                                <span class="preview-icon">📱</span>
+                                                <h4>心灵盾牌APP - 学生端</h4>
+                                            </div>
+                                            <div class="preview-image-container">
+                                                <div class="preview-placeholder">
+                                                    <!-- <span class="placeholder-icon">🖼️</span>
+                                                    <p>APP界面截图</p>
+                                                    <small>请添加图片链接: student-app-preview.png</small> -->
+													<img src="student-app-preview.png" alt="心灵盾牌APP界面预览" class="preview-image">
+                                                </div>
+                                                <!-- 后期添加图片的位置 -->
+                                                <!-- <img src="path/to/student-app-preview.png" alt="心灵盾牌APP界面预览" class="preview-image"> -->
+                                            </div>
+                                            <div class="preview-description">
+                                                <p><strong>主要功能：</strong>智能扫描、风险预警、训练模块、状态监测</p>
+                                                <p><strong>设计特色：</strong>去污名化设计、温暖色调、直观交互</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="preview-card">
+                                            <div class="preview-header">
+                                                <span class="preview-icon">💻</span>
+                                                <h4>守护者控制台 - 管理端</h4>
+                                            </div>
+                                            <div class="preview-image-container">
+                                                <div class="preview-placeholder">
+                                                    <!-- <span class="placeholder-icon">🖼️</span>
+                                                    <p>管理后台截图</p>
+                                                    <small>请添加图片链接: admin-console-preview.png</small> -->
+													<img src="admin-console-preview.png" alt="守护者控制台界面预览" class="preview-image">
+                                                </div>
+                                                <!-- 后期添加图片的位置 -->
+                                                <!-- <img src="path/to/admin-console-preview.png" alt="守护者控制台界面预览" class="preview-image"> -->
+                                            </div>
+                                            <div class="preview-description">
+                                                <p><strong>主要功能：</strong>数据大屏、用户管理、预警处理、统计分析</p>
+                                                <p><strong>设计特色：</strong>专业仪表盘、数据可视化、操作便捷</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="preview-card">
+                                            <div class="preview-header">
+                                                <span class="preview-icon">👨‍👩‍👧‍👦</span>
+                                                <h4>心灵桥梁平台 - 家长端</h4>
+                                            </div>
+                                            <div class="preview-image-container">
+                                                <div class="preview-placeholder">
+                                                    <!-- <span class="placeholder-icon">🖼️</span>
+                                                    <p>小程序界面截图</p>
+                                                    <small>请添加图片链接: parent-platform-preview.png</small> -->
+													<img src="parent-platform-preview.png" alt="心灵桥梁平台界面预览" class="preview-image">
+                                                </div>
+                                                <!-- 后期添加图片的位置 -->
+                                                <!-- <img src="path/to/parent-platform-preview.png" alt="心灵桥梁平台界面预览" class="preview-image"> -->
+                                            </div>
+                                            <div class="preview-description">
+                                                <p><strong>主要功能：</strong>关怀指导、沟通技巧、状态了解、资源推荐</p>
+                                                <p><strong>设计特色：</strong>微信生态、简洁易用、温馨设计</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-content" id="ui-frontend">
+                                    <div class="tech-detail-grid">
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>📱</span> 心灵盾牌APP
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                基于uni-app框架的跨平台移动应用，支持iOS和Android双端发布，提供统一的用户体验。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">开发框架</span>
+                                                    <span class="spec-value">uni-app + Vue.js 3.0</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">UI组件</span>
+                                                    <span class="spec-value">uView UI + 自定义组件</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">状态管理</span>
+                                                    <span class="spec-value">Vuex + Pinia</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">构建工具</span>
+                                                    <span class="spec-value">HBuilderX + Vite</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>💻</span> 守护者控制台
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                基于Vue.js的现代化管理后台，提供数据可视化、用户管理、系统监控等功能。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">前端框架</span>
+                                                    <span class="spec-value">Vue.js 3.0 + TypeScript</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">UI框架</span>
+                                                    <span class="spec-value">Element Plus</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">图表库</span>
+                                                    <span class="spec-value">ECharts + D3.js</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">路由管理</span>
+                                                    <span class="spec-value">Vue Router 4.0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>👨‍👩‍👧‍👦</span> 心灵桥梁平台
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                微信小程序原生开发，为家长提供便捷的关怀指导和沟通工具。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">开发平台</span>
+                                                    <span class="spec-value">微信小程序原生</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">UI组件</span>
+                                                    <span class="spec-value">WeUI + 自定义组件</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">数据管理</span>
+                                                    <span class="spec-value">小程序云开发</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">支付集成</span>
+                                                    <span class="spec-value">微信支付API</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-content" id="ui-design">
+                                    <div class="tech-detail-grid">
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>🎨</span> 设计系统
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                统一的设计语言和组件规范，确保三端界面的一致性和用户体验。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">色彩系统</span>
+                                                    <span class="spec-value">主色调 + 语义色彩</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">字体规范</span>
+                                                    <span class="spec-value">苹方 + 微软雅黑</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">间距系统</span>
+                                                    <span class="spec-value">8px基础网格</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>🧩</span> 组件库
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                可复用的UI组件库，提高开发效率，保证界面一致性。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">基础组件</span>
+                                                    <span class="spec-value">按钮、输入框、选择器等</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">业务组件</span>
+                                                    <span class="spec-value">风险卡片、训练模块等</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-content" id="ui-optimization">
+                                    <div class="tech-detail-grid">
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>⚡</span> 性能优化
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                多层次的性能优化策略，确保应用流畅运行和良好的用户体验。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">代码分割</span>
+                                                    <span class="spec-value">路由级别按需加载</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">资源优化</span>
+                                                    <span class="spec-value">图片压缩 + CDN加速</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">缓存策略</span>
+                                                    <span class="spec-value">多级缓存机制</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 业务逻辑层 -->
+                        <div class="layer" onclick="toggleLayer(this)" data-layer="business">
+                            <div class="layer-header">
+                                <div class="layer-title">
+                                    <span class="layer-icon">⚙️</span>
+                                    业务逻辑层 (Business Layer)
+                                </div>
+                                <div class="layer-badge">微服务架构</div>
+                            </div>
+                            <div class="layer-description">
+                                核心业务逻辑处理层，采用微服务架构，实现服务间的松耦合和高内聚。
+                            </div>
+                            <div class="layer-components">
+                                <div class="component">
+                                    <div class="component-name">用户管理服务</div>
+                                    <div class="component-desc">身份认证、权限控制</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">分析服务</div>
+                                    <div class="component-desc">AI算法调用、风险识别</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">推荐服务</div>
+                                    <div class="component-desc">个性化内容推荐</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">通知服务</div>
+                                    <div class="component-desc">消息推送、预警通知</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">数据服务</div>
+                                    <div class="component-desc">统计分析、报表生成</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">API网关</div>
+                                    <div class="component-desc">统一接口管理</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 详细展开内容 -->
+                            <div class="layer-detail" id="business-detail">
+                                <button class="close-detail" onclick="closeDetail(event)">×</button>
+                                <h3 style="color: #2d3748; margin-bottom: 20px;">⚙️ 业务逻辑层 - 微服务架构详解</h3>
+                                
+                                <div class="detail-tabs">
+                                    <button class="detail-tab active" onclick="switchDetailTab(event, 'business-services')">核心服务</button>
+                                    <button class="detail-tab" onclick="switchDetailTab(event, 'business-gateway')">API网关</button>
+                                    <button class="detail-tab" onclick="switchDetailTab(event, 'business-governance')">服务治理</button>
+                                    <button class="detail-tab" onclick="switchDetailTab(event, 'business-security')">安全机制</button>
+                                </div>
+                                
+                                <!-- 核心服务 -->
+                                <div class="detail-content active" id="business-services">
+                                    <div class="tech-detail-grid">
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>👤</span> 用户管理服务
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                负责用户注册、登录、身份认证、权限管理等核心用户功能，采用JWT+OAuth2.0安全认证机制。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">认证方式</span>
+                                                    <span class="spec-value">JWT + OAuth 2.0 + MFA</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">权限模型</span>
+                                                    <span class="spec-value">RBAC + ABAC混合模型</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">会话管理</span>
+                                                    <span class="spec-value">Redis分布式会话</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">密码策略</span>
+                                                    <span class="spec-value">BCrypt + 盐值加密</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>🔍</span> 分析服务
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                调用AI引擎进行文本分析、行为检测、风险评估，是系统智能化的核心枢纽。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">处理架构</span>
+                                                    <span class="spec-value">异步队列 + 流式处理</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">AI引擎调用</span>
+                                                    <span class="spec-value">gRPC + REST API</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">结果缓存</span>
+                                                    <span class="spec-value">Redis + 过期策略</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">并发处理</span>
+                                                    <span class="spec-value">线程池 + 协程</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>💡</span> 推荐服务
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                基于用户画像和AI分析结果，提供个性化的训练内容和干预方案推荐。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">推荐算法</span>
+                                                    <span class="spec-value">协同过滤 + 内容推荐</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">实时计算</span>
+                                                    <span class="spec-value">Spark Streaming</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">效果评估</span>
+                                                    <span class="spec-value">A/B测试框架</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">冷启动</span>
+                                                    <span class="spec-value">基于人口统计学</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>📢</span> 通知服务
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                统一的消息推送服务，支持多渠道通知，确保重要信息及时触达用户。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">推送渠道</span>
+                                                    <span class="spec-value">APP推送 + 短信 + 邮件</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">消息队列</span>
+                                                    <span class="spec-value">RabbitMQ + 死信队列</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">模板引擎</span>
+                                                    <span class="spec-value">Thymeleaf + 多语言</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">频率控制</span>
+                                                    <span class="spec-value">基于规则的限流</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- API网关 -->
+                                <div class="detail-content" id="business-gateway">
+                                    <div class="tech-detail-grid">
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>🚪</span> 网关功能
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                作为系统的统一入口，提供路由转发、负载均衡、认证鉴权、限流熔断等功能。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">网关技术</span>
+                                                    <span class="spec-value">Spring Cloud Gateway</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">负载均衡</span>
+                                                    <span class="spec-value">Ribbon + 自定义策略</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">限流算法</span>
+                                                    <span class="spec-value">令牌桶 + 滑动窗口</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">熔断机制</span>
+                                                    <span class="spec-value">Hystrix + Resilience4j</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>📊</span> 监控与日志
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                全方位的API监控和日志收集，提供实时的系统健康状态和性能指标。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">监控工具</span>
+                                                    <span class="spec-value">Prometheus + Grafana</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">链路追踪</span>
+                                                    <span class="spec-value">Sleuth + Zipkin</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">日志收集</span>
+                                                    <span class="spec-value">ELK Stack</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">告警机制</span>
+                                                    <span class="spec-value">AlertManager + 钉钉</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 服务治理 -->
+                                <div class="detail-content" id="business-governance">
+                                    <div class="tech-detail-grid">
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>🎛️</span> 服务注册与发现
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                基于Nacos的服务注册与发现机制，支持服务的动态上下线和健康检查。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">注册中心</span>
+                                                    <span class="spec-value">Nacos + Eureka备选</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">健康检查</span>
+                                                    <span class="spec-value">HTTP + TCP双重检查</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">配置管理</span>
+                                                    <span class="spec-value">Nacos Config</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">版本管理</span>
+                                                    <span class="spec-value">蓝绿部署 + 灰度发布</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>⚖️</span> 负载均衡策略
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                多种负载均衡算法，根据服务特点和负载情况动态选择最优策略。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">算法策略</span>
+                                                    <span class="spec-value">轮询 + 权重 + 最少连接</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">动态权重</span>
+                                                    <span class="spec-value">基于响应时间调整</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">故障转移</span>
+                                                    <span class="spec-value">自动剔除故障节点</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">会话保持</span>
+                                                    <span class="spec-value">一致性哈希算法</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 安全机制 -->
+                                <div class="detail-content" id="business-security">
+                                    <div class="tech-detail-grid">
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>🔐</span> 认证与授权
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                多层次的安全认证体系，确保只有合法用户才能访问相应的系统资源。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">认证协议</span>
+                                                    <span class="spec-value">OAuth 2.0 + OpenID Connect</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">Token管理</span>
+                                                    <span class="spec-value">JWT + Refresh Token</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">多因子认证</span>
+                                                    <span class="spec-value">短信 + 邮箱 + TOTP</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">单点登录</span>
+                                                    <span class="spec-value">SAML 2.0 + CAS</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="tech-detail-card">
+                                            <div class="tech-detail-title">
+                                                <span>🛡️</span> 数据安全
+                                            </div>
+                                            <div class="tech-detail-desc">
+                                                全方位的数据保护机制，从传输到存储，从访问到审计的完整安全链路。
+                                            </div>
+                                            <div class="tech-specs">
+                                                <div class="spec-item">
+                                                    <span class="spec-label">传输加密</span>
+                                                    <span class="spec-value">TLS 1.3 + HTTPS</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">存储加密</span>
+                                                    <span class="spec-value">AES-256 + 数据脱敏</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">访问控制</span>
+                                                    <span class="spec-value">基于属性的访问控制</span>
+                                                </div>
+                                                <div class="spec-item">
+                                                    <span class="spec-label">操作审计</span>
+                                                    <span class="spec-value">完整的操作日志记录</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI算法层 -->
+                        <div class="layer" onclick="toggleLayer(this)" data-layer="ai">
+                            <div class="layer-header">
+                                <div class="layer-title">
+                                    <span class="layer-icon">🤖</span>
+                                    AI算法层 (AI Engine Layer)
+                                </div>
+                                <div class="layer-badge">核心智能</div>
+                            </div>
+                            <div class="layer-description">
+                                系统的智能核心，包含四大AI引擎，提供文本识别、行为分析、状态评估和个性化推荐能力。
+                            </div>
+                            <div class="layer-components">
+                                <div class="component">
+                                    <div class="component-name">文本识别引擎</div>
+                                    <div class="component-desc">基于ERNIE的话术识别</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">行为检测引擎</div>
+                                    <div class="component-desc">多维度行为异常分析</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">状态评估引擎</div>
+                                    <div class="component-desc">心理健康状态建模</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">推荐引擎</div>
+                                    <div class="component-desc">CBT智能推荐算法</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">模型服务</div>
+                                    <div class="component-desc">模型版本管理、热更新</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">训练平台</div>
+                                    <div class="component-desc">持续学习、模型优化</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 数据存储层 -->
+                        <div class="layer" onclick="toggleLayer(this)" data-layer="data">
+                            <div class="layer-header">
+                                <div class="layer-title">
+                                    <span class="layer-icon">🗄️</span>
+                                    数据存储层 (Data Storage Layer)
+                                </div>
+                                <div class="layer-badge">多元存储</div>
+                            </div>
+                            <div class="layer-description">
+                                采用多元化存储策略，根据不同数据类型和访问模式选择最适合的存储方案。
+                            </div>
+                            <div class="layer-components">
+                                <div class="component">
+                                    <div class="component-name">关系数据库</div>
+                                    <div class="component-desc">达梦DM8，核心业务数据</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">缓存系统</div>
+                                    <div class="component-desc">Redis集群，高速缓存</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">文档存储</div>
+                                    <div class="component-desc">MongoDB，非结构化数据</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">搜索引擎</div>
+                                    <div class="component-desc">Elasticsearch，全文检索</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">对象存储</div>
+                                    <div class="component-desc">阿里云OSS，文件存储</div>
+                                </div>
+                                <div class="component">
+                                    <div class="component-name">数据备份</div>
+                                    <div class="component-desc">多重备份、灾难恢复</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI引擎详细介绍 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>🧠</span>
+                    四大AI引擎：核心智能能力
+                </h2>
+                
+                <div class="ai-engines-section">
+                    <div class="engines-tabs">
+                        <button class="tab-btn active" onclick="switchEngine('text')">🔍 文本识别引擎</button>
+                        <button class="tab-btn" onclick="switchEngine('behavior')">📊 行为检测引擎</button>
+                        <button class="tab-btn" onclick="switchEngine('assessment')">🎯 状态评估引擎</button>
+                        <button class="tab-btn" onclick="switchEngine('recommendation')">💡 推荐引擎</button>
+                    </div>
+                    
+                    <!-- 文本识别引擎 -->
+                    <div class="engine-content active" id="text-engine">
+                        <div class="engine-overview">
+                            <div class="engine-details">
+                                <h3 style="color: #2d3748; margin-bottom: 15px;">🔍 文本操控识别引擎</h3>
+                                <p style="color: #4a5568; margin-bottom: 20px;">
+                                    基于百度ERNIE大模型的中文文本深度理解能力，专门训练用于识别网络心理操控话术模式。
+                                    通过对大量操控案例的学习，能够精准识别各种操控类型。
+                                </p>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                                    <strong style="color: #2d3748;">核心技术：</strong>
+                                    <span style="color: #6c757d;">ERNIE-3.0 + 领域微调 + 对抗训练</span>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                    <strong style="color: #2d3748;">训练数据：</strong>
+                                    <span style="color: #6c757d;">50,000+ 心理操控话术样本</span>
+                                </div>
+                            </div>
+                            <div class="engine-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number">85%+</span>
+                                    <div class="stat-label">识别准确率</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">200ms</span>
+                                    <div class="stat-label">平均响应时间</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">7×24</span>
+                                    <div class="stat-label">全天候服务</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="engine-features">
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>👑</span> 权威型操控识别
+                                </div>
+                                <div class="feature-desc">识别利用权威身份进行操控的话术模式，如假冒导师、专家等身份进行的心理操控。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>💔</span> 情感绑架检测
+                                </div>
+                                <div class="feature-desc">检测利用情感依赖、愧疚感等进行操控的语言模式，保护用户免受情感伤害。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>📈</span> 渐进式要求识别
+                                </div>
+                                <div class="feature-desc">识别从小要求逐步升级到大要求的操控策略，及时阻断操控行为的发展。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>⚠️</span> 威胁恐吓分析
+                                </div>
+                                <div class="feature-desc">识别明示或暗示的威胁恐吓语言，保护用户心理安全。</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 行为检测引擎 -->
+                    <div class="engine-content" id="behavior-engine">
+                        <div class="engine-overview">
+                            <div class="engine-details">
+                                <h3 style="color: #2d3748; margin-bottom: 15px;">📊 行为异常检测引擎</h3>
+                                <p style="color: #4a5568; margin-bottom: 20px;">
+                                    通过多维度用户行为数据分析，建立个性化行为基线，识别异常行为模式。
+                                    结合时间序列分析和机器学习算法，提供精准的行为异常预警。
+                                </p>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                                    <strong style="color: #2d3748;">核心算法：</strong>
+                                    <span style="color: #6c757d;">LSTM + Isolation Forest + 时间序列分析</span>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                    <strong style="color: #2d3748;">监测维度：</strong>
+                                    <span style="color: #6c757d;">学习、社交、消费、作息四大维度</span>
+                                </div>
+                            </div>
+                            <div class="engine-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number">90%+</span>
+                                    <div class="stat-label">异常检测率</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">5min</span>
+                                    <div class="stat-label">处理延迟</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">15%</span>
+                                    <div class="stat-label">准确率提升</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="engine-features">
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>📚</span> 学习行为监测
+                                </div>
+                                <div class="feature-desc">监测学习时长、效率变化、课程参与度等，识别学业压力导致的异常行为。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>👥</span> 社交模式分析
+                                </div>
+                                <div class="feature-desc">分析社交频率、圈子变化、交流模式等，发现社交异常和孤立风险。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>💰</span> 消费行为跟踪
+                                </div>
+                                <div class="feature-desc">监测消费习惯变化，识别可能的经济压力或异常支出模式。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>🌙</span> 作息规律检测
+                                </div>
+                                <div class="feature-desc">分析睡眠质量、作息规律变化，评估心理健康状态指标。</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 状态评估引擎 -->
+                    <div class="engine-content" id="assessment-engine">
+                        <div class="engine-overview">
+                            <div class="engine-details">
+                                <h3 style="color: #2d3748; margin-bottom: 15px;">🎯 心理状态评估引擎</h3>
+                                <p style="color: #4a5568; margin-bottom: 20px;">
+                                    基于心理学理论和大数据分析，构建多维度心理健康评估模型。
+                                    实时更新个体心理画像，提供科学的风险预测和健康状态评估。
+                                </p>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                                    <strong style="color: #2d3748;">理论基础：</strong>
+                                    <span style="color: #6c757d;">认知行为理论 + 多维度心理测评</span>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                    <strong style="color: #2d3748;">评估维度：</strong>
+                                    <span style="color: #6c757d;">情绪、认知、行为、社交四个维度</span>
+                                </div>
+                            </div>
+                            <div class="engine-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number">75%+</span>
+                                    <div class="stat-label">风险预测准确率</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">实时</span>
+                                    <div class="stat-label">动态更新</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">4维度</span>
+                                    <div class="stat-label">全方位评估</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="engine-features">
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>😊</span> 情绪状态分析
+                                </div>
+                                <div class="feature-desc">分析情绪波动、情感表达模式，识别抑郁、焦虑等情绪风险。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>🧠</span> 认知能力评估
+                                </div>
+                                <div class="feature-desc">评估注意力、记忆力、思维能力等认知功能，发现认知偏差。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>🎭</span> 行为模式识别
+                                </div>
+                                <div class="feature-desc">识别行为异常、习惯改变，评估行为健康度和适应性。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>🤝</span> 社交能力测评
+                                </div>
+                                <div class="feature-desc">评估人际交往能力、社会支持网络，识别社交困难和孤立风险。</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 推荐引擎 -->
+                    <div class="engine-content" id="recommendation-engine">
+                        <div class="engine-overview">
+                            <div class="engine-details">
+                                <h3 style="color: #2d3748; margin-bottom: 15px;">💡 个性化干预推荐引擎</h3>
+                                <p style="color: #4a5568; margin-bottom: 20px;">
+                                    基于认知行为疗法(CBT)理论，结合个体特征和心理状态，
+                                    提供个性化的干预方案和训练内容，实现精准的心理健康支持。
+                                </p>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                                    <strong style="color: #2d3748;">推荐算法：</strong>
+                                    <span style="color: #6c757d;">协同过滤 + 内容推荐 + 深度学习</span>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                                    <strong style="color: #2d3748;">理论基础：</strong>
+                                    <span style="color: #6c757d;">CBT认知行为疗法数字化实现</span>
+                                </div>
+                            </div>
+                            <div class="engine-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number">4.2/5</span>
+                                    <div class="stat-label">用户满意度</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">60%+</span>
+                                    <div class="stat-label">训练完成率</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">70%+</span>
+                                    <div class="stat-label">用户回访率</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="engine-features">
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>🎯</span> 个性化匹配
+                                </div>
+                                <div class="feature-desc">根据个体心理特征、学习偏好、时间安排等因素，智能匹配最适合的训练方案。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>📈</span> 效果跟踪
+                                </div>
+                                <div class="feature-desc">实时评估干预效果，基于反馈数据动态调整推荐策略和训练难度。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>🎓</span> 学习优化
+                                </div>
+                                <div class="feature-desc">基于大量用户数据和反馈，持续优化推荐算法，提升推荐精度和效果。</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-title">
+                                    <span>🔄</span> 自适应调整
+                                </div>
+                                <div class="feature-desc">根据用户状态变化和进展情况，自动调整训练内容和推荐策略。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 技术栈展示 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>⚡</span>
+                    技术栈选择：国产化+现代化
+                </h2>
+                
+                <div class="tech-stack">
+                    <p style="text-align: center; font-size: 1.1em; color: #276749; margin-bottom: 30px;">
+                        <strong>优先采用中国自主可控技术栈，确保系统安全性和可维护性</strong>
+                    </p>
+                    
+                    <div class="tech-categories">
+                        <div class="tech-category">
+                            <div class="tech-category-title">
+                                <span>🤖</span> AI与算法
+                            </div>
+                            <ul class="tech-list">
+                                <li>
+                                    <span class="tech-name">百度ERNIE-3.0</span>
+                                    <span class="tech-purpose">中文语言理解</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">飞桨PaddlePaddle</span>
+                                    <span class="tech-purpose">深度学习框架</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">智谱ChatGLM</span>
+                                    <span class="tech-purpose">对话生成</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">TensorFlow</span>
+                                    <span class="tech-purpose">机器学习</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="tech-category">
+                            <div class="tech-category-title">
+                                <span>🏗️</span> 后端服务
+                            </div>
+                            <ul class="tech-list">
+                                <li>
+                                    <span class="tech-name">Spring Boot</span>
+                                    <span class="tech-purpose">微服务框架</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">Spring Cloud</span>
+                                    <span class="tech-purpose">分布式系统</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">Nacos</span>
+                                    <span class="tech-purpose">服务注册发现</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">RabbitMQ</span>
+                                    <span class="tech-purpose">消息队列</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="tech-category">
+                            <div class="tech-category-title">
+                                <span>🗄️</span> 数据存储
+                            </div>
+                            <ul class="tech-list">
+                                <li>
+                                    <span class="tech-name">达梦DM8</span>
+                                    <span class="tech-purpose">关系数据库</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">人大金仓</span>
+                                    <span class="tech-purpose">备选数据库</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">Redis</span>
+                                    <span class="tech-purpose">缓存系统</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">MongoDB</span>
+                                    <span class="tech-purpose">文档数据库</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="tech-category">
+                            <div class="tech-category-title">
+                                <span>📱</span> 前端技术
+                            </div>
+                            <ul class="tech-list">
+                                <li>
+                                    <span class="tech-name">Vue.js 3.0</span>
+                                    <span class="tech-purpose">前端框架</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">uni-app</span>
+                                    <span class="tech-purpose">跨平台开发</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">Element Plus</span>
+                                    <span class="tech-purpose">UI组件库</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">微信小程序</span>
+                                    <span class="tech-purpose">家长端平台</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="tech-category">
+                            <div class="tech-category-title">
+                                <span>☁️</span> 云服务
+                            </div>
+                            <ul class="tech-list">
+                                <li>
+                                    <span class="tech-name">阿里云</span>
+                                    <span class="tech-purpose">主要云平台</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">腾讯云</span>
+                                    <span class="tech-purpose">备选云平台</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">Docker</span>
+                                    <span class="tech-purpose">容器化部署</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">Kubernetes</span>
+                                    <span class="tech-purpose">容器编排</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="tech-category">
+                            <div class="tech-category-title">
+                                <span>🔒</span> 安全保障
+                            </div>
+                            <ul class="tech-list">
+                                <li>
+                                    <span class="tech-name">Spring Security</span>
+                                    <span class="tech-purpose">安全框架</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">JWT</span>
+                                    <span class="tech-purpose">身份认证</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">SSL/TLS</span>
+                                    <span class="tech-purpose">传输加密</span>
+                                </li>
+                                <li>
+                                    <span class="tech-name">WAF</span>
+                                    <span class="tech-purpose">Web应用防火墙</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 系统特色 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>✨</span>
+                    架构特色：现代化设计理念
+                </h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin: 30px 0;">
+                    <div style="background: linear-gradient(135deg, #ebf8ff, #bee3f8); border: 2px solid #4299e1; border-radius: 15px; padding: 25px;">
+                        <h4 style="color: #2b6cb0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span>🚀</span> 云原生架构
+                        </h4>
+                        <p style="color: #4a5568; line-height: 1.6;">
+                            基于容器化和微服务的云原生架构设计，支持弹性扩缩容、故障自愈、灰度发布等现代化运维能力。
+                        </p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f0fff4, #c6f6d5); border: 2px solid #48bb78; border-radius: 15px; padding: 25px;">
+                        <h4 style="color: #276749; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span>🔐</span> 安全优先
+                        </h4>
+                        <p style="color: #4a5568; line-height: 1.6;">
+                            多层次安全防护体系，包括网络安全、数据加密、隐私保护、访问控制等，确保用户数据和系统安全。
+                        </p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #faf5ff, #e9d8fd); border: 2px solid #9f7aea; border-radius: 15px; padding: 25px;">
+                        <h4 style="color: #553c9a; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span>📈</span> 高可扩展
+                        </h4>
+                        <p style="color: #4a5568; line-height: 1.6;">
+                            模块化设计支持系统功能的灵活扩展，微服务架构支持性能的水平扩展，满足业务增长需求。
+                        </p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #f59e0b; border-radius: 15px; padding: 25px;">
+                        <h4 style="color: #92400e; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span>🎯</span> 智能化
+                        </h4>
+                        <p style="color: #4a5568; line-height: 1.6;">
+                            AI能力贯穿整个系统架构，从数据收集、分析处理到决策推荐，实现全流程的智能化支持。
+                        </p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #fff5f5, #fed7d7); border: 2px solid #fc8181; border-radius: 15px; padding: 25px;">
+                        <h4 style="color: #c53030; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span>🇨🇳</span> 国产化
+                        </h4>
+                        <p style="color: #4a5568; line-height: 1.6;">
+                            优先采用国产技术栈，支持信创要求，确保技术自主可控，降低对国外技术的依赖风险。
+                        </p>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #f7fafc, #edf2f7); border: 2px solid #a0aec0; border-radius: 15px; padding: 25px;">
+                        <h4 style="color: #2d3748; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span>🔄</span> 持续进化
+                        </h4>
+                        <p style="color: #4a5568; line-height: 1.6;">
+                            支持模型在线学习、A/B测试、灰度发布等机制，系统能够基于用户反馈持续优化和进化。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 进度条
+        window.addEventListener('scroll', function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+        
+        // 导航功能
+        function goHome() {
+			window.location.href = 'index.html';
+			//alert('返回演示系统首页\n\n实际使用时将跳转到导航页面');
+        }
+        
+        // 层级切换和详细展开
+        function toggleLayer(layerElement) {
+            const layerId = layerElement.getAttribute('data-layer');
+            const detailElement = document.getElementById(layerId + '-detail');
+            
+            // 检查是否已经展开
+            if (detailElement && detailElement.classList.contains('active')) {
+                // 如果已经展开，则收起
+                detailElement.classList.remove('active');
+                layerElement.classList.remove('active');
+            } else {
+                // 先收起所有其他的详细内容
+                document.querySelectorAll('.layer-detail').forEach(detail => {
+                    detail.classList.remove('active');
+                });
+                document.querySelectorAll('.layer').forEach(layer => {
+                    layer.classList.remove('active');
+                });
+                
+                // 展开当前层的详细内容
+                if (detailElement) {
+                    detailElement.classList.add('active');
+                    layerElement.classList.add('active');
+                    
+                    // 滚动到详细内容
+                    setTimeout(() => {
+                        detailElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }, 300);
+                }
+            }
+            
+            const layerTitle = layerElement.querySelector('.layer-title').textContent;
+            console.log('切换层级：', layerTitle);
+        }
+        
+        // 关闭详细内容
+        function closeDetail(event) {
+            event.stopPropagation();
+            const detailElement = event.target.closest('.layer-detail');
+            const layerElement = event.target.closest('.layer');
+            
+            if (detailElement) {
+                detailElement.classList.remove('active');
+            }
+            if (layerElement) {
+                layerElement.classList.remove('active');
+            }
+        }
+        
+        // 切换详细内容的标签页
+        function switchDetailTab(event, tabId) {
+            event.stopPropagation();
+            
+            // 获取父容器
+            const container = event.target.closest('.layer-detail');
+            
+            // 移除所有活动状态
+            container.querySelectorAll('.detail-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            container.querySelectorAll('.detail-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 激活当前标签页
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        // AI引擎切换
+        function switchEngine(engineType) {
+            // 移除所有tab的活动状态
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 移除所有内容的活动状态
+            document.querySelectorAll('.engine-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 激活当前tab
+            event.target.classList.add('active');
+            
+            // 显示对应内容
+            document.getElementById(engineType + '-engine').classList.add('active');
+        }
+        
+        // 页面加载完成时的动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为层级添加初始动画
+            const layers = document.querySelectorAll('.layer');
+            layers.forEach((layer, index) => {
+                layer.style.opacity = '0';
+                layer.style.transform = 'translateX(-50px)';
+                setTimeout(() => {
+                    layer.style.transition = 'all 0.6s ease';
+                    layer.style.opacity = '1';
+                    layer.style.transform = 'translateX(0)';
+                }, index * 200);
+            });
+        });
+        
+        // 添加键盘导航支持
+        document.addEventListener('keydown', function(e) {
+            if (e.key >= '1' && e.key <= '4') {
+                const engines = ['text', 'behavior', 'assessment', 'recommendation'];
+                const index = parseInt(e.key) - 1;
+                if (engines[index]) {
+                    switchEngine(engines[index]);
+                }
+            }
+        });
+        
+        // 鼠标跟踪效果
+        document.addEventListener('mousemove', function(e) {
+            const cursor = document.querySelector('.cursor');
+            if (!cursor) {
+                const newCursor = document.createElement('div');
+                newCursor.className = 'cursor';
+                newCursor.style.cssText = `
+                    position: fixed;
+                    width: 20px;
+                    height: 20px;
+                    background: radial-gradient(circle, rgba(102,126,234,0.3), transparent);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    transition: all 0.1s ease;
+                `;
+                document.body.appendChild(newCursor);
+            }
+            
+            const cursor2 = document.querySelector('.cursor');
+            cursor2.style.left = (e.clientX - 10) + 'px';
+            cursor2.style.top = (e.clientY - 10) + 'px';
+        });
+    </script>
+</body>
+</html>

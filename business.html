@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心灵守护者 - 商业价值与市场分析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.05) 10px,
+                rgba(255,255,255,0.05) 20px
+            );
+            animation: drift 20s linear infinite;
+        }
+        
+        @keyframes drift {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header .subtitle {
+            font-size: 1.4em;
+            opacity: 0.9;
+        }
+        
+        .nav-breadcrumb {
+            background: #f8f9fa;
+            padding: 15px 40px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #6c757d;
+        }
+        
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .breadcrumb a:hover {
+            color: #764ba2;
+        }
+        
+        .progress-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .section:nth-child(1) { animation-delay: 0.2s; }
+        .section:nth-child(2) { animation-delay: 0.4s; }
+        .section:nth-child(3) { animation-delay: 0.6s; }
+        .section:nth-child(4) { animation-delay: 0.8s; }
+        .section:nth-child(5) { animation-delay: 1.0s; }
+        .section:nth-child(6) { animation-delay: 1.2s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-title {
+            font-size: 2.2em;
+            color: #2d3748;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+        
+        /* 市场规模展示 - 修改为3×2布局 */
+        .market-overview {
+            background: linear-gradient(135deg, #e8f5e8, #d4edda);
+            border: 2px solid #28a745;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .market-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 25px;
+            margin: 25px 0;
+        }
+        
+        .market-stat {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .market-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .market-stat:hover::before {
+            left: 100%;
+        }
+        
+        .market-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.2);
+        }
+        
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .stat-desc {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        /* 商业模式画布 */
+        .business-model {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border: 2px solid #ff9800;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        
+        .model-canvas {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, auto);
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .canvas-block {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #ff9800;
+            transition: all 0.3s ease;
+        }
+        
+        .canvas-block:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 152, 0, 0.2);
+        }
+        
+        .canvas-title {
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .canvas-content {
+            color: #5d4037;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .canvas-content ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .canvas-content li {
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .canvas-content li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #ff9800;
+            font-weight: bold;
+        }
+        
+        /* 价值主张展示 - 修改为2×2布局 */
+        .value-proposition {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border: 2px solid #9c27b0;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        
+        .value-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 25px;
+            margin: 25px 0;
+        }
+        
+        .value-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #9c27b0;
+            transition: all 0.3s ease;
+        }
+        
+        .value-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 35px rgba(156, 39, 176, 0.2);
+        }
+        
+        .value-card-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+            text-align: center;
+        }
+        
+        .value-card-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #7b1fa2;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .value-card-desc {
+            color: #5d4037;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        /* 竞争分析 */
+        .competition-analysis {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        
+        .comparison-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin: 25px 0;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            color: white;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            font-weight: bold;
+        }
+        
+        .table-row {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.3s ease;
+        }
+        
+        .table-row:hover {
+            background: #f8f9fa;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .feature-status {
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .status-excellent {
+            color: #28a745;
+        }
+        
+        .status-good {
+            color: #17a2b8;
+        }
+        
+        .status-average {
+            color: #ffc107;
+        }
+        
+        .status-poor {
+            color: #dc3545;
+        }
+        
+        /* 收入预测图表 */
+        .revenue-forecast {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border: 2px solid #ff9800;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .revenue-chart {
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            height: 300px;
+            background: linear-gradient(to top, #f8f9fa 0%, #f8f9fa 50%, #e9ecef 50%, #e9ecef 100%);
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .chart-bar {
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 5px 5px 0 0;
+            width: 60px;
+            transition: all 0.5s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .chart-bar:hover {
+            filter: brightness(1.2);
+            transform: scaleY(1.05);
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #2d3748;
+            background: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .y-axis {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+            color: #6c757d;
+        }
+        
+        /* 融资计划 */
+        .funding-plan {
+            background: linear-gradient(135deg, #f1f8e9, #dcedc8);
+            border: 2px solid #8bc34a;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        
+        .funding-stages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .funding-stage {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #8bc34a;
+            transition: all 0.3s ease;
+        }
+        
+        .funding-stage:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(139, 195, 74, 0.2);
+        }
+        
+        .stage-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #558b2f;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stage-amount {
+            font-size: 2em;
+            font-weight: bold;
+            color: #388e3c;
+            margin-bottom: 10px;
+        }
+        
+        .stage-timeline {
+            color: #6c757d;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .stage-uses {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .stage-uses li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            color: #5d4037;
+            font-size: 0.9em;
+        }
+        
+        .stage-uses li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #8bc34a;
+            font-weight: bold;
+        }
+        
+        /* 风险分析 */
+        .risk-analysis {
+            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+            border: 2px solid #e91e63;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin: 25px 0;
+        }
+        
+        .risk-category {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #e91e63;
+        }
+        
+        .risk-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #c2185b;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .risk-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .risk-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .risk-item:last-child {
+            border-bottom: none;
+        }
+        
+        .risk-name {
+            flex: 1;
+            color: #5d4037;
+        }
+        
+        .risk-level {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .risk-high {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .risk-medium {
+            background: #fff8e1;
+            color: #f57c00;
+        }
+        
+        .risk-low {
+            background: #e8f5e8;
+            color: #388e3c;
+        }
+        
+        /* 成功指标 */
+        .success-metrics {
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            border: 2px solid #4caf50;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 默认四列 */
+            gap: 25px;
+            margin: 25px 0;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.2);
+        }
+        
+        .metric-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .metric-target {
+            font-size: 2em;
+            font-weight: bold;
+            color: #388e3c;
+            margin-bottom: 5px;
+        }
+        
+        .metric-title {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .metric-timeline {
+            color: #6c757d;
+            font-size: 0.8em;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 1.8em;
+            }
+            
+            .model-canvas {
+                grid-template-columns: 1fr;
+            }
+            
+            .market-stats-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(6, 1fr);
+            }
+            
+            .value-cards {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, 1fr);
+            }
+            
+            .table-header, .table-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .chart-container {
+                padding: 20px 10px;
+            }
+            
+            .revenue-chart {
+                height: 200px;
+                padding: 10px;
+            }
+            
+            .chart-bar {
+                width: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-indicator" id="progressBar"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>💼 商业价值分析</h1>
+                <div class="subtitle">千亿级市场机遇 · 创新商业模式 · 可持续发展</div>
+            </div>
+        </div>
+        
+        <div class="nav-breadcrumb">
+            <div class="breadcrumb">
+                <a href="javascript:void(0)" onclick="goHome()">🏠 演示系统</a>
+                <span>></span>
+                <span>💼 商业价值分析</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <!-- 市场规模分析 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>📊</span>
+                    市场规模：千亿级蓝海市场
+                </h2>
+                
+                <div class="market-overview">
+                    <h3 style="text-align: center; color: #2d5016; margin-bottom: 25px; font-size: 1.5em;">
+                        🎯 目标市场全景分析
+                    </h3>
+                    
+                    <div class="market-stats-grid">
+                        <div class="market-stat">
+                            <span class="stat-icon">🎓</span>
+                            <div class="stat-number">4000万</div>
+                            <div class="stat-label">全国在校大学生</div>
+                            <div class="stat-desc">直接目标用户群体</div>
+                        </div>
+                        
+                        <div class="market-stat">
+                            <span class="stat-icon">🏫</span>
+                            <div class="stat-number">2,800+</div>
+                            <div class="stat-label">全国高等院校</div>
+                            <div class="stat-desc">潜在机构客户</div>
+                        </div>
+                        
+                        <div class="market-stat">
+                            <span class="stat-icon">👨‍👩‍👧‍👦</span>
+                            <div class="stat-number">1.2亿</div>
+                            <div class="stat-label">大学生家庭用户</div>
+                            <div class="stat-desc">间接服务对象</div>
+                        </div>
+                        
+                        <div class="market-stat">
+                            <span class="stat-icon">💰</span>
+                            <div class="stat-number">1,200亿</div>
+                            <div class="stat-label">心理健康市场规模</div>
+							<div class="stat-desc">(2025年预测)</div>
+							
+                        </div>
+                        
+                        <div class="market-stat">
+                            <span class="stat-icon">📈</span>
+                            <div class="stat-number">25%</div>
+                            <div class="stat-label">年增长率</div>
+                            <div class="stat-desc">心理健康服务市场</div>
+                        </div>
+                        
+                        <div class="market-stat">
+                            <span class="stat-icon">🎯</span>
+                            <div class="stat-number">120亿</div>
+                            <div class="stat-label">可触达市场规模</div>
+                            <div class="stat-desc">高校心理健康细分市场</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.8); padding: 20px; border-radius: 15px; margin-top: 25px; border-left: 5px solid #28a745;">
+                        <h4 style="color: #2d5016; margin-bottom: 10px;">🚀 市场机会分析</h4>
+                        <p style="color: #495057; line-height: 1.6;">
+                            <strong>蓝海市场：</strong>网络心理操控防护是全新细分领域，国内外尚无成熟竞争对手。<br>
+                            <strong>刚需痛点：</strong>数字时代大学生群体面临的心理安全威胁日益严重，防护需求迫切。<br>
+                            <strong>政策支持：</strong>"健康中国2030"战略重点关注心理健康，为行业发展提供政策红利。<br>
+                            <strong>技术成熟：</strong>AI技术发展为解决方案实现提供了技术基础。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商业模式画布 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>🏗️</span>
+                    商业模式：B2B2C生态闭环
+                </h2>
+                
+                <div class="business-model">
+                    <h3 style="text-align: center; color: #e65100; margin-bottom: 25px; font-size: 1.5em;">
+                        📋 商业模式画布
+                    </h3>
+                    
+                    <div class="model-canvas">
+                        <div class="canvas-block">
+                            <div class="canvas-title">🤝 关键合作</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>高等院校</li>
+                                    <li>心理健康机构</li>
+                                    <li>AI技术供应商</li>
+                                    <li>云服务提供商</li>
+                                    <li>政府相关部门</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="canvas-block">
+                            <div class="canvas-title">⚙️ 关键活动</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>AI算法优化</li>
+                                    <li>产品研发迭代</li>
+                                    <li>市场推广营销</li>
+                                    <li>客户服务支持</li>
+                                    <li>数据安全维护</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="canvas-block">
+                            <div class="canvas-title">🎁 价值主张</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>专项心理操控识别</li>
+                                    <li>7×24小时智能守护</li>
+                                    <li>三端协同防护体系</li>
+                                    <li>个性化干预方案</li>
+                                    <li>去污名化产品设计</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="canvas-block">
+                            <div class="canvas-title">💎 核心资源</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>AI技术算法</li>
+                                    <li>心理学专业团队</li>
+                                    <li>用户数据资产</li>
+                                    <li>知识产权专利</li>
+                                    <li>合作伙伴网络</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="canvas-block">
+                            <div class="canvas-title">🤝 客户关系</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>学校：长期合作</li>
+                                    <li>学生：社区自助</li>
+                                    <li>家长：定期互动</li>
+                                    <li>专家：专业支持</li>
+                                    <li>合作伙伴</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="canvas-block">
+                            <div class="canvas-title">👥 客户细分</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>B端：高等院校</li>
+                                    <li>C端：在校大学生</li>
+                                    <li>C端：学生家长</li>
+                                    <li>专业机构</li>
+                                    <li>政府部门</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="canvas-block">
+                            <div class="canvas-title">📱 渠道通路</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>直销团队</li>
+                                    <li>线上营销</li>
+                                    <li>合作伙伴</li>
+                                    <li>学术会议</li>
+                                    <li>政策推广</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="canvas-block">
+                            <div class="canvas-title">💰 收入来源</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>SaaS订阅费用</li>
+                                    <li>定制开发服务</li>
+                                    <li>培训咨询收入</li>
+                                    <li>数据服务费用</li>
+                                    <li>增值服务</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="canvas-block">
+                            <div class="canvas-title">💸 成本结构</div>
+                            <div class="canvas-content">
+                                <ul>
+                                    <li>研发投入(40%)</li>
+                                    <li>人力成本(30%)</li>
+                                    <li>营销推广(15%)</li>
+                                    <li>运营维护(10%)</li>
+                                    <li>其他成本(5%)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 价值主张详解 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>💎</span>
+                    核心价值主张：三重价值创造
+                </h2>
+                
+                <div class="value-proposition">
+                    <h3 style="text-align: center; color: #7b1fa2; margin-bottom: 25px; font-size: 1.5em;">
+                        🎯 为不同用户群体创造独特价值
+                    </h3>
+                    
+                    <div class="value-cards">
+                        <div class="value-card">
+                            <span class="value-card-icon">🎓</span>
+                            <div class="value-card-title">学生价值</div>
+                            <div class="value-card-desc">
+                                <strong>智能防护：</strong>7×24小时实时守护，预防心理操控风险<br>
+                                <strong>技能提升：</strong>通过训练模块提升防护意识和能力<br>
+                                <strong>去污名化：</strong>工具化设计消除心理阻抗<br>
+                                <strong>同伴支持：</strong>构建健康的社交互助网络
+                            </div>
+                        </div>
+                        
+                        <div class="value-card">
+                            <span class="value-card-icon">🏫</span>
+                            <div class="value-card-title">学校价值</div>
+                            <div class="value-card-desc">
+                                <strong>风险管控：</strong>全校态势感知，提前预警重大风险<br>
+                                <strong>效率提升：</strong>AI辅助决策，优化资源配置<br>
+                                <strong>数据支撑：</strong>科学数据分析支持管理决策<br>
+                                <strong>责任履行：</strong>更好履行学生安全保护责任
+                            </div>
+                        </div>
+                        
+                        <div class="value-card">
+                            <span class="value-card-icon">👨‍👩‍👧‍👦</span>
+                            <div class="value-card-title">家长价值</div>
+                            <div class="value-card-desc">
+                                <strong>状态了解：</strong>及时了解孩子心理健康状况<br>
+                                <strong>科学指导：</strong>获得专业的家庭教育建议<br>
+                                <strong>沟通改善：</strong>提升亲子沟通质量和效果<br>
+                                <strong>安心保障：</strong>孩子安全得到专业技术保护
+                            </div>
+                        </div>
+                        
+                        <div class="value-card">
+                            <span class="value-card-icon">🏥</span>
+                            <div class="value-card-title">机构价值</div>
+                            <div class="value-card-desc">
+                                <strong>专业工具：</strong>AI辅助提升专业服务质量<br>
+                                <strong>效率提升：</strong>批量化处理提高服务效率<br>
+                                <strong>标准化：</strong>建立行业服务标准和规范<br>
+                                <strong>数据洞察：</strong>获得行业发展趋势洞察
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 竞争分析 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>⚔️</span>
+                    竞争优势：差异化领先地位
+                </h2>
+                
+                <div class="competition-analysis">
+                    <h3 style="text-align: center; color: #1565c0; margin-bottom: 25px; font-size: 1.5em;">
+                        🏆 竞争对比分析矩阵
+                    </h3>
+                    
+                    <div class="comparison-table">
+                        <div class="table-header">
+                            <div>核心能力</div>
+                            <div>心灵守护者</div>
+                            <div>通用心理健康APP</div>
+                            <div>传统网络安全工具</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="feature-name">🎯 专项操控识别</div>
+                            <div class="feature-status status-excellent">优秀</div>
+                            <div class="feature-status status-poor">无</div>
+                            <div class="feature-status status-poor">无</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="feature-name">🤖 AI技术应用</div>
+                            <div class="feature-status status-excellent">领先</div>
+                            <div class="feature-status status-good">一般</div>
+                            <div class="feature-status status-average">传统</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="feature-name">👥 用户群体定位</div>
+                            <div class="feature-status status-excellent">精准</div>
+                            <div class="feature-status status-average">泛化</div>
+                            <div class="feature-status status-average">企业</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="feature-name">🔄 三端协同</div>
+                            <div class="feature-status status-excellent">独有</div>
+                            <div class="feature-status status-poor">无</div>
+                            <div class="feature-status status-poor">无</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="feature-name">🎨 去污名化设计</div>
+                            <div class="feature-status status-excellent">创新</div>
+                            <div class="feature-status status-poor">传统</div>
+                            <div class="feature-status status-poor">无关</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="feature-name">📊 数据分析能力</div>
+                            <div class="feature-status status-excellent">强</div>
+                            <div class="feature-status status-good">中等</div>
+                            <div class="feature-status status-good">中等</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="feature-name">🛡️ 实时防护</div>
+                            <div class="feature-status status-excellent">24/7</div>
+                            <div class="feature-status status-average">被动</div>
+                            <div class="feature-status status-good">技术</div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="feature-name">🎓 教育属性</div>
+                            <div class="feature-status status-excellent">强</div>
+                            <div class="feature-status status-good">中等</div>
+                            <div class="feature-status status-poor">无</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.8); padding: 20px; border-radius: 15px; margin-top: 25px; border-left: 5px solid #2196f3;">
+                        <h4 style="color: #1565c0; margin-bottom: 10px;">🚀 差异化优势总结</h4>
+                        <p style="color: #495057; line-height: 1.6;">
+                            <strong>蓝海定位：</strong>国内首个专门针对网络心理操控的AI防护产品，无直接竞争对手。<br>
+                            <strong>技术领先：</strong>AI+心理学跨学科融合，识别准确率达85%以上。<br>
+                            <strong>生态完整：</strong>三端协同构建完整防护生态，形成竞争壁垒。<br>
+                            <strong>用户体验：</strong>去污名化设计大幅提升用户接受度和使用粘性。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 收入预测 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>📈</span>
+                    收入预测：可持续增长模型
+                </h2>
+                
+                <div class="revenue-forecast">
+                    <h3 style="text-align: center; color: #e65100; margin-bottom: 25px; font-size: 1.5em;">
+                        💰 未来5年收入预测（单位：万元）
+                    </h3>
+                    
+                    <div class="chart-container">
+                        <div class="revenue-chart">
+                            <div class="y-axis">
+                                <span>8000</span>
+                                <span>6000</span>
+                                <span>4000</span>
+                                <span>2000</span>
+                                <span>0</span>
+                            </div>
+                            
+                            <div class="chart-bar" style="height: 50px;" onclick="showDetails('2025')">
+                                <div class="bar-value">350万</div>
+                                <div class="bar-label">2025年</div>
+                            </div>
+                            
+                            <div class="chart-bar" style="height: 120px;" onclick="showDetails('2026')">
+                                <div class="bar-value">1,200万</div>
+                                <div class="bar-label">2026年</div>
+                            </div>
+                            
+                            <div class="chart-bar" style="height: 180px;" onclick="showDetails('2027')">
+                                <div class="bar-value">2,800万</div>
+                                <div class="bar-label">2027年</div>
+                            </div>
+                            
+                            <div class="chart-bar" style="height: 240px;" onclick="showDetails('2028')">
+                                <div class="bar-value">4,500万</div>
+                                <div class="bar-label">2028年</div>
+                            </div>
+                            
+                            <div class="chart-bar" style="height: 280px;" onclick="showDetails('2029')">
+                                <div class="bar-value">7,200万</div>
+                                <div class="bar-label">2029年</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 25px;">
+                        <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #e65100;">SaaS订阅</strong><br>
+                            <span style="color: #6c757d; font-size: 0.9em;">占总收入60%</span>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #e65100;">定制服务</strong><br>
+                            <span style="color: #6c757d; font-size: 0.9em;">占总收入25%</span>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #e65100;">培训咨询</strong><br>
+                            <span style="color: #6c757d; font-size: 0.9em;">占总收入10%</span>
+                        </div>
+                        <div style="background: white; padding: 15px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #e65100;">增值服务</strong><br>
+                            <span style="color: #6c757d; font-size: 0.9em;">占总收入5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 融资计划 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>💎</span>
+                    融资规划：分阶段发展策略
+                </h2>
+                
+                <div class="funding-plan">
+                    <h3 style="text-align: center; color: #558b2f; margin-bottom: 25px; font-size: 1.5em;">
+                        🚀 三轮融资发展路径
+                    </h3>
+                    
+                    <div class="funding-stages">
+                        <div class="funding-stage">
+                            <div class="stage-title">
+                                <span>🌱</span> 种子轮
+                            </div>
+                            <div class="stage-amount">300万</div>
+                            <div class="stage-timeline">2025年 Q2-Q3</div>
+                            <ul class="stage-uses">
+                                <li>产品原型开发</li>
+                                <li>核心团队组建</li>
+                                <li>技术验证测试</li>
+                                <li>市场调研分析</li>
+                                <li>知识产权申请</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="funding-stage">
+                            <div class="stage-title">
+                                <span>🚀</span> A轮
+                            </div>
+                            <div class="stage-amount">1,500万</div>
+                            <div class="stage-timeline">2026年 Q1-Q2</div>
+                            <ul class="stage-uses">
+                                <li>产品优化迭代</li>
+                                <li>市场推广营销</li>
+                                <li>客户获取转化</li>
+                                <li>团队规模扩张</li>
+                                <li>运营体系建设</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="funding-stage">
+                            <div class="stage-title">
+                                <span>🏆</span> B轮
+                            </div>
+                            <div class="stage-amount">5,000万</div>
+                            <div class="stage-timeline">2027年 Q3-Q4</div>
+                            <ul class="stage-uses">
+                                <li>全国市场拓展</li>
+                                <li>技术研发投入</li>
+                                <li>生态合作建设</li>
+                                <li>品牌建设推广</li>
+                                <li>国际化准备</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.8); padding: 20px; border-radius: 15px; margin-top: 25px; border-left: 5px solid #8bc34a;">
+                        <h4 style="color: #558b2f; margin-bottom: 10px;">💰 投资亮点</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; color: #495057;">
+                            <div>
+                                <strong>蓝海市场：</strong><br>
+                                首创细分赛道，无直接竞争
+                            </div>
+                            <div>
+                                <strong>技术壁垒：</strong><br>
+                                AI+心理学跨学科门槛
+                            </div>
+                            <div>
+                                <strong>规模化潜力：</strong><br>
+                                SaaS模式，边际成本递减
+                            </div>
+                            <div>
+                                <strong>社会价值：</strong><br>
+                                解决重大社会问题
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 风险分析 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>⚠️</span>
+                    风险评估：全面风险管控
+                </h2>
+                
+                <div class="risk-analysis">
+                    <h3 style="text-align: center; color: #c2185b; margin-bottom: 25px; font-size: 1.5em;">
+                        🛡️ 风险识别与应对策略
+                    </h3>
+                    
+                    <div class="risk-matrix">
+                        <div class="risk-category">
+                            <div class="risk-title">
+                                <span>⚙️</span> 技术风险
+                            </div>
+                            <div class="risk-list">
+                                <div class="risk-item">
+                                    <span class="risk-name">AI算法准确率不达预期</span>
+                                    <span class="risk-level risk-medium">中等</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">数据安全和隐私保护</span>
+                                    <span class="risk-level risk-high">高</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">系统稳定性和可扩展性</span>
+                                    <span class="risk-level risk-low">低</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">技术更新迭代速度</span>
+                                    <span class="risk-level risk-medium">中等</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="risk-category">
+                            <div class="risk-title">
+                                <span>💼</span> 市场风险
+                            </div>
+                            <div class="risk-list">
+                                <div class="risk-item">
+                                    <span class="risk-name">市场接受度不如预期</span>
+                                    <span class="risk-level risk-medium">中等</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">竞争对手快速跟进</span>
+                                    <span class="risk-level risk-medium">中等</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">政策环境变化影响</span>
+                                    <span class="risk-level risk-low">低</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">客户付费意愿不足</span>
+                                    <span class="risk-level risk-medium">中等</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="risk-category">
+                            <div class="risk-title">
+                                <span>💰</span> 财务风险
+                            </div>
+                            <div class="risk-list">
+                                <div class="risk-item">
+                                    <span class="risk-name">融资进度延迟</span>
+                                    <span class="risk-level risk-medium">中等</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">现金流管理压力</span>
+                                    <span class="risk-level risk-high">高</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">成本控制失当</span>
+                                    <span class="risk-level risk-low">低</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">收入模式验证失败</span>
+                                    <span class="risk-level risk-medium">中等</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="risk-category">
+                            <div class="risk-title">
+                                <span>👥</span> 运营风险
+                            </div>
+                            <div class="risk-list">
+                                <div class="risk-item">
+                                    <span class="risk-name">核心团队流失</span>
+                                    <span class="risk-level risk-high">高</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">专业人才招聘困难</span>
+                                    <span class="risk-level risk-medium">中等</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">客户服务质量下降</span>
+                                    <span class="risk-level risk-low">低</span>
+                                </div>
+                                <div class="risk-item">
+                                    <span class="risk-name">供应链管理风险</span>
+                                    <span class="risk-level risk-low">低</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 成功指标 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <span>🎯</span>
+                    成功指标：量化发展目标
+                </h2>
+                
+                <div class="success-metrics">
+                    <h3 style="text-align: center; color: #2e7d32; margin-bottom: 25px; font-size: 1.5em;">
+                        📊 关键成功指标（KPI）
+                    </h3>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="metric-icon">👥</span>
+                            <div class="metric-target">100万+</div>
+                            <div class="metric-title">注册用户数</div>
+                            <div class="metric-timeline">3年内目标</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <span class="metric-icon">🏫</span>
+                            <div class="metric-target">500+</div>
+                            <div class="metric-title">合作高校</div>
+                            <div class="metric-timeline">5年内目标</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <span class="metric-icon">💰</span>
+                            <div class="metric-target">7,200万</div>
+                            <div class="metric-title">年收入规模</div>
+                            <div class="metric-timeline">2029年目标</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <span class="metric-icon">🎯</span>
+                            <div class="metric-target">90%+</div>
+                            <div class="metric-title">识别准确率</div>
+                            <div class="metric-timeline">持续优化</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <span class="metric-icon">📈</span>
+                            <div class="metric-target">15%</div>
+                            <div class="metric-title">市场份额</div>
+                            <div class="metric-timeline">细分市场</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <span class="metric-icon">⭐</span>
+                            <div class="metric-target">4.5/5.0</div>
+                            <div class="metric-title">用户满意度</div>
+                            <div class="metric-timeline">持续维持</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <span class="metric-icon">🔄</span>
+                            <div class="metric-target">85%+</div>
+                            <div class="metric-title">用户留存率</div>
+                            <div class="metric-timeline">年度留存</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <span class="metric-icon">🌍</span>
+                            <div class="metric-target">3个</div>
+                            <div class="metric-title">国际市场</div>
+                            <div class="metric-timeline">长期规划</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.8); padding: 20px; border-radius: 15px; margin-top: 25px; border-left: 5px solid #4caf50;">
+                        <h4 style="color: #2e7d32; margin-bottom: 15px;">🚀 里程碑规划</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; color: #495057;">
+                            <div style="background: white; padding: 15px; border-radius: 8px;">
+                                <strong>2025年：</strong>产品MVP发布，获得种子用户
+                            </div>
+                            <div style="background: white; padding: 15px; border-radius: 8px;">
+                                <strong>2026年：</strong>完成A轮融资，覆盖100所高校
+                            </div>
+                            <div style="background: white; padding: 15px; border-radius: 8px;">
+                                <strong>2027年：</strong>成为行业标杆，建立生态壁垒
+                            </div>
+                            <div style="background: white; padding: 15px; border-radius: 8px;">
+                                <strong>2028年：</strong>启动国际化，探索海外市场
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+	<script>		// 导航功能		function goHome() {			window.location.href = 'index.html';				    }			        	</script></body></html>
